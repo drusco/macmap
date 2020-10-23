@@ -1,0 +1,36 @@
+{
+  "name": "macmap",
+  "version": "1.0.0",
+  "description": "(c) 2020 Pedro Gallardo",
+  "author": {
+    "name": "Pedro Gallardo",
+    "email": "pedrogallardo7011@gmail.com"
+  },
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development electron .",
+    "build": "nuxt build",
+    "start": "electron .",
+    "mac": "electron-packager . --overwrite --asar --platform darwin --arch x64 --icon ./static/icon.ico --out build",
+    "win": "electron-packager . --overwrite --asar --platform win32 --arch ia32 --icon ./static/icon.ico --out build",
+    "linux": "electron-packager . --overwrite --asar --platform linux --arch x64 --out build"
+  },
+  "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^5.15.1",
+    "@nuxtjs/axios": "^5.12.2",
+    "@nuxtjs/fontawesome": "^1.1.2",
+    "bootstrap-vue": "^2.17.3",
+    "cross-env": "^3.1.4",
+    "electron-dl": "^3.0.2",
+    "js2excel": "^1.0.1",
+    "json2xls": "^0.1.2",
+    "node-zip": "^1.1.1",
+    "nuxt": "latest",
+    "slugify": "^1.4.5"
+  },
+  "devDependencies": {
+    "electron": "latest",
+    "electron-packager": "latest"
+  }
+}
