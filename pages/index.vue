@@ -625,11 +625,11 @@ export default {
                 this.downloadCount++
 
                 if (index === currentProductIds.length - 1) {
-                  this.downloadLogs.unshift({text: (error ? ' ×' : ' ✔ ') + country.name})
+                  this.downloadLogs.unshift({text: (error ? ' × ' : ' ✔ ') + country.name})
                   if(cx === currentExporters.length-1){
                     // the end
                     if(!this.downloading) return
-                    setImmediate(() => {
+                    setTimeout(() => {
 
                       renderer.send('download', results)
 
@@ -641,7 +641,7 @@ export default {
                         }
                       }, 500)
 
-                    })
+                    }, 1000)
                   }
                 }
               })
