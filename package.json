@@ -13,7 +13,8 @@
     "build": "nuxt build",
     "start": "electron .",
     "mac": "electron-packager . --overwrite --asar --platform darwin --arch x64 --icon ./static/icon.ico --out build",
-    "win": "electron-packager . --overwrite --asar --platform win32 --arch ia32 --icon ./static/icon.ico --out build",
+    "win32": "electron-packager . --overwrite --asar --platform win32 --arch ia32 --icon ./static/icon.ico --out build",
+    "win64": "electron-packager . --overwrite --asar --platform win32 --arch x64 --icon ./static/icon.ico --out build",
     "linux": "electron-packager . --overwrite --asar --platform linux --arch x64 --out build"
   },
   "dependencies": {
