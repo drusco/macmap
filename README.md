@@ -1,16 +1,8 @@
-# Electron
-Create an Electron app that serves a Nuxt.js app
-
 ## Installation
 
 Install the dependencies:
 ```bash
-npm install # Or yarn install
-```
-
-If you plan to use the `npm run pack` command below, ensure electron-packager is installed globally:
-```bash
-npm install -g electron-packager # Or yarn global add electron-packager
+npm install
 ```
 
 ## Development mode
@@ -28,8 +20,17 @@ npm run start
 
 ## Package the app
 
+##### For Windows
 ```bash
-npm run pack
+npm run win
 ```
 
-See more on [electron-packager documentation](https://github.com/electron-userland/electron-packager).
+##### For Mac
+```bash
+npm run mac
+```
+
+##### For Linux
+```bash
+npm run linux
+```
