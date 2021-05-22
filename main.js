@@ -41,7 +41,6 @@ const zip = require('node-zip')
 const {download} = require('electron-dl')
 const {ipcMain} = electron
 const path = require('path')
-const url = require('url')
 
 const POLL_INTERVAL = 300
 let SERVER_DOWN = true
