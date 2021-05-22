@@ -2,6 +2,7 @@
 **  Nuxt.js part
 */
 process.env.NODE_ENV = process.env.NODE_ENV || 'production'
+const dev = !(process.env.NODE_ENV === 'production')
 let win = null // Current window
 
 const http = require('http')
@@ -9,7 +10,7 @@ const {Nuxt, Builder} = require('nuxt')
 
 // Import and Set Nuxt.js options
 let config = require('./nuxt.config.js')
-config.dev = !(process.env.NODE_ENV === 'production')
+config.dev = dev
 config.rootDir = __dirname // for electron-packager
 
 // Init Nuxt.js
@@ -75,7 +76,8 @@ const newWin = () => {
         frame: false,
         icon: path.resolve('./static/icon.png'),
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: dev,
+            contextIsolation: !dev,
         }
     })
 
