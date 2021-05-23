@@ -102,28 +102,36 @@ const newWin = () => {
     ipcMain.on('download', (event, results) => {
 
         percent = 0
+        const table = []
         const dl = new zip()
 
         results.forEach(country => {
-            const table = []
+
             country.data.forEach(product => {
 
                 product.data.forEach(importer => {
+                    const countryCode = importer.CountryCode
+                    const countryName = importer.CountryName
                     delete importer['ReporterName']
+                    delete importer['CountryCode']
+                    delete importer['CountryName']
                     table.push(Object.assign({
-                        Exporter: country.name,
-                        ProductId: product.code
+                        ProductId: product.code,
+                        ExporterId: country.code,
+                        ExporterName: country.name,
+                        ImporterId: countryCode,
+                        ImporterName: countryName,
                     }, importer))
                 })
 
             })
 
-            let xls = json2xls(table)
-            let buf = Buffer.from(xls, 'binary')
-
-            dl.file(slugify(country.name + '.xlsx'), buf)
-
         })
+
+        let xls = json2xls(table)
+        let buf = Buffer.from(xls, 'binary')
+
+        dl.file(slugify('macmap-'+ Date.now() +'.xlsx'), buf)
 
         const data = dl.generate({base64: true, compression: 'DEFLATE'});
 
