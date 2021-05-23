@@ -76,8 +76,8 @@ const newWin = () => {
         frame: false,
         icon: path.resolve('./static/icon.png'),
         webPreferences: {
-            nodeIntegration: dev,
-            contextIsolation: !dev,
+            nodeIntegration: true, //dev,
+            contextIsolation: false, //!dev,
             // preload: path.join(__dirname, 'preload.js'),
         }
     })
