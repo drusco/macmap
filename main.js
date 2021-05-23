@@ -78,6 +78,7 @@ const newWin = () => {
         webPreferences: {
             nodeIntegration: dev,
             contextIsolation: !dev,
+            // preload: path.join(__dirname, 'preload.js'),
         }
     })
 
@@ -101,24 +102,32 @@ const newWin = () => {
     ipcMain.on('download', (event, results) => {
 
         percent = 0
-        const dl = new zip();
+        const dl = new zip()
 
         results.forEach(country => {
+            const table = []
             country.data.forEach(product => {
 
-                product.data.forEach(c => delete c['ReporterName'])
-
-                let xls = json2xls(product.data)
-                let buf = Buffer.from(xls, 'binary')
-
-                dl.file(slugify(country.name + '-' + product.code + '.xlsx').toLocaleLowerCase(), buf)
+                product.data.forEach(importer => {
+                    delete importer['ReporterName']
+                    table.push(Object.assign({
+                        Exporter: country.name,
+                        ProductId: product.code
+                    }, importer))
+                })
 
             })
+
+            let xls = json2xls(table)
+            let buf = Buffer.from(xls, 'binary')
+
+            dl.file(slugify(country.name + '.xlsx'), buf)
+
         })
 
         const data = dl.generate({base64: true, compression: 'DEFLATE'});
 
-        download(bw.getFocusedWindow(), 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + data, {
+        download(bw.getFocusedWindow(), 'data:application/zip;base64,' + data, {
             saveAs: true,
             filename: 'macmap-' + Date.now() + '.zip',
             onProgress(d) {

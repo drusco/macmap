@@ -319,7 +319,7 @@
                               <fa icon="download" class="mr-1"></fa>
                               Descargar
                             </button>
-                            <span class="ml-2 text-muted text-sm">/ {{ totalFiles }} Archivos para descargar</span>
+                            <span class="ml-2 text-muted text-sm">/ {{ totalFiles }} Archivos en zip</span>
                           </div>
                         </footer>
                       </section>
@@ -480,7 +480,7 @@ export default {
   },
   computed: {
     totalFiles() {
-      return this.exporters * this.selectedProducts.length
+      return this.exporters// * this.selectedProducts.length
     },
     exporters() {
       return this.exporter.filter(e => e.active).length
@@ -622,9 +622,8 @@ export default {
               })
               .finally(() => {
 
-                this.downloadCount++
-
                 if (index === currentProductIds.length - 1) {
+                  this.downloadCount++
                   this.downloadLogs.unshift({text: (error ? ' × ' : ' ✔ ') + country.name})
                   if(cx === currentExporters.length-1){
                     // the end
