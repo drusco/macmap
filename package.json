@@ -14,15 +14,16 @@
     "obfuscate-main": "javascript-obfuscator main.js --output ./build rotateStringArray=true",
     "obfuscate-nuxt-config": "javascript-obfuscator nuxt.config.js --output ./build rotateStringArray=true",
     "start": "electron .",
-    "mac": "electron-packager ./build --overwrite --asar --platform darwin --arch x64 --icon ./static/icon.ico --out dist --prune",
+    "mac": "electron-packager ./build --overwrite --asar --platform darwin --arch x64 --icon ./static/icon.icns --out dist --prune",
     "win": "electron-packager ./build --overwrite --asar --platform win32 --arch ia32 --icon ./static/icon.ico --out dist --prune",
-    "linux": "electron-packager ./build --overwrite --asar --platform linux --arch x64 --icon ./static/icon.icns --out dist --prune"
+    "linux": "electron-packager ./build --overwrite --asar --platform linux --arch x64 --icon ./static/icon.ico --out dist --prune"
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
     "@nuxtjs/axios": "^5.13.4",
     "@nuxtjs/fontawesome": "^1.1.2",
     "bootstrap-vue": "^2.17.3",
+    "electron": "latest",
     "electron-dl": "^3.0.2",
     "js2excel": "^1.0.1",
     "json2xls": "^0.1.2",
@@ -32,7 +33,6 @@
   },
   "devDependencies": {
     "cross-env": "^3.1.4",
-    "electron": "latest",
     "electron-packager": "latest",
     "javascript-obfuscator": "^2.19.0",
     "webpack-obfuscator": "2.6.0"
