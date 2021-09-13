@@ -78,6 +78,7 @@ const newWin = () => {
         webPreferences: {
             nodeIntegration: true, //dev,
             contextIsolation: false, //!dev,
+            nativeWindowOpen: false,
             // preload: path.join(__dirname, 'preload.js'),
         }
     })

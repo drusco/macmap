@@ -319,7 +319,7 @@
                               <fa icon="download" class="mr-1"></fa>
                               Descargar
                             </button>
-                            <span class="ml-2 text-muted text-sm">/ {{ totalFiles }} Archivos en zip</span>
+                            <span class="ml-2 text-muted text-sm">/ {{ totalFiles }} países en .xls comprimido</span>
                           </div>
                         </footer>
                       </section>
@@ -327,7 +327,8 @@
                     <!-- downloads -->
                     <div v-if="downloading" class="col h-100">
                       <!-- content wrapper -->
-                      <section :class="{'loading loading-dark': totalFiles === downloadCount}" class="bg-darker h-100 d-flex flex-column">
+                      <section :class="{'loading loading-dark': totalFiles === downloadCount}"
+                               class="bg-darker h-100 d-flex flex-column">
                         <!-- header -->
                         <header class="bg-primary text-white p-3 pl-4 pr-4" style="z-index:9">
                           <h5 class="m-0">
@@ -352,7 +353,10 @@
                                   <div class="p-2 h-100" style="font-family: monospace">
                                     <div class="h-100 rounded text-white">
                                       <span class="d-block mb-1" v-for="log in downloadLogs">
-                                        {{ log.text }}
+                                        <span class="mr-1">{{ log.text }}</span>
+                                        <small v-if="log.percentage">
+                                          {{ log.percentage }}%
+                                        </small>
                                       </span>
                                     </div>
                                   </div>
@@ -444,7 +448,7 @@
 import info from '~/package.json'
 import electron from 'electron'
 
-const API = 'https://macmap.org/api'
+const API = 'https://legacy.macmap.org/api'
 const renderer = electron.ipcRenderer
 
 export default {
@@ -475,7 +479,11 @@ export default {
       settings: {
         importer: [],
         exporter: ['032']
-      }
+      },
+      cliSpinner: [
+        "⊶",
+        "⊷"
+      ]
     }
   },
   computed: {
@@ -509,7 +517,7 @@ export default {
       this.exporter.unshift({name: 'Argentina', code: '032', active: false})
       this.importer.unshift({name: 'Argentina', code: '032', active: false})
     }).catch((err) => {
-      console.log(err)
+      //console.log(err)
     }).finally(() => {
       this.starting = false
       this.loadSettings()
@@ -564,7 +572,7 @@ export default {
         })
       }
     },
-    download() {
+    async download() {
 
       if (this.downloading) return
 
@@ -596,56 +604,80 @@ export default {
 
       const results = []
 
-      currentExporters.forEach((country, cx) => {
+      for (let cx = 0; cx < currentExporters.length; cx++) {
+        let spinnerIndex = 0;
+        let variation = 0.2;
+        let oneHundred = 100;
+        let spinnerSpeed = 250;
+        let lastSpinnerMove = Date.now();
+        let intervalSpeed = 100;
+        let progress = 0;
+        let progressLimit = oneHundred;
+        const country = currentExporters[cx];
+        this.downloadLogs.unshift({ text: country.name });
+        let log = this.downloadLogs[0];
+
+        const countryDownloadProgress = setInterval(() => {
+          let now = Date.now();
+          if (progress < progressLimit) {
+            progress += variation;
+          }
+          if (progress > oneHundred) progress = oneHundred;
+          if (now-lastSpinnerMove >= spinnerSpeed) {
+            lastSpinnerMove = now;
+            spinnerIndex = spinnerIndex === this.cliSpinner.length-1 ? 0 : spinnerIndex+1
+          }
+          log.text = `${progress >= oneHundred ? ' ✔ ' : this.cliSpinner[spinnerIndex]} ${country.name}`
+          log.percentage = progress && progress < oneHundred ? progress.toFixed(1) : undefined
+          if (!this.downloading || progress >= oneHundred) clearInterval(countryDownloadProgress)
+        }, intervalSpeed)
         results.push({
           name: country.name,
           code: country.code,
           data: []
         })
         const ix = results.length - 1
-        currentProductIds.forEach((p, index) => {
-          let error
-          this.getProductById(p.code, country.code)
-              .catch(e => error = e)
-              .then(data => {
-                if (!data) return
-                results[ix].data.push({
-                  name: p.name,
-                  code: p.code,
-                  data: data.ImporterViewData.filter((country) => {
-                    // delete country.ReporterName
-                    return currentImporters.filter((importer) => {
-                      return importer.code === country.CountryCode
-                    }).length
-                  })
-                })
-              })
-              .finally(() => {
+        for (let index = 0; index < currentProductIds.length; index++) {
+          progressLimit = ((index + 1) * oneHundred) / currentProductIds.length;
+          progress = progressLimit - (100/currentProductIds.length);
+          //console.log(progressLimit)
+          const p = currentProductIds[index];
+          const data = await this.getProductById(p.code, country.code).catch(console.log)
+          if (!data) continue;
+          results[ix].data.push({
+            name: p.name,
+            code: p.code,
+            data: data.ImporterViewData.filter((country) => {
+              // delete country.ReporterName
+              return currentImporters.filter((importer) => {
+                return importer.code === country.CountryCode
+              }).length
+            })
+          })
+          if (index === currentProductIds.length - 1) {
+            //console.log('clearInterval for: ', country.name)
+            progress = oneHundred;
+            this.downloadCount++
+            if (cx === currentExporters.length - 1) {
+              // the end
+              if (!this.downloading) return
+              setTimeout(() => {
 
-                if (index === currentProductIds.length - 1) {
-                  this.downloadCount++
-                  this.downloadLogs.unshift({text: (error ? ' × ' : ' ✔ ') + country.name})
-                  if(cx === currentExporters.length-1){
-                    // the end
-                    if(!this.downloading) return
-                    setTimeout(() => {
+                renderer.send('download', results)
 
-                      renderer.send('download', results)
-
-                      let loop = setInterval(() => {
-                        let percent = renderer.sendSync('get-download-progress')
-                        if(percent === 1) {
-                          this.downloading = false
-                          clearInterval(loop)
-                        }
-                      }, 500)
-
-                    }, 1000)
+                let loop = setInterval(() => {
+                  let percent = renderer.sendSync('get-download-progress')
+                  if (percent === 1) {
+                    this.downloading = false
+                    clearInterval(loop)
                   }
-                }
-              })
-        })
-      })
+                }, 500)
+
+              }, 1000)
+            }
+          }
+        }
+      }
 
     },
     selectProduct(product) {
@@ -680,6 +712,7 @@ export default {
       return await this.$axios.$get(API + '/results/importerview?reporter=All&partner=' + partner + '&product=' + id, {
         cancelToken: this.currentCancelToken
       }).catch(err => {
+        //console.log(err.message)
         if (this.starting) this.exit()
       })
     }

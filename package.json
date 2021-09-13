@@ -1,6 +1,6 @@
 {
   "name": "macmap",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "(c) 2020 Pedro Gallardo",
   "author": {
     "name": "Pedro Gallardo",
@@ -10,11 +10,14 @@
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development electron .",
-    "build": "nuxt build",
+    "build": "nuxt build && cp ./package.json ./build && npm run obfuscate-main && npm run obfuscate-preload && npm run obfuscate-nuxt-config",
+    "obfuscate-main": "javascript-obfuscator main.js --output ./build rotateStringArray=true",
+    "obfuscate-preload": "javascript-obfuscator preload.js --output ./build rotateStringArray=true",
+    "obfuscate-nuxt-config": "javascript-obfuscator nuxt.config.js --output ./build rotateStringArray=true",
     "start": "electron .",
-    "mac": "electron-packager . --overwrite --asar --platform darwin --arch x64 --icon ./static/icon.ico --out build --no-prune",
-    "win": "electron-packager . --overwrite --asar --platform win32 --arch ia32 --icon ./static/icon.ico --out build --no-prune",
-    "linux": "electron-packager . --overwrite --asar --platform linux --arch x64 --out build --no-prune"
+    "mac": "electron-packager ./build --overwrite --asar --platform darwin --arch x64 --icon ./static/icon.ico --out dist --no-prune",
+    "win": "electron-packager ./build --overwrite --asar --platform win32 --arch ia32 --icon ./static/icon.ico --out dist --no-prune",
+    "linux": "electron-packager ./build --overwrite --asar --platform linux --arch x64 --icon ./static/icon.icns --out dist --no-prune"
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
@@ -26,11 +29,13 @@
     "js2excel": "^1.0.1",
     "json2xls": "^0.1.2",
     "node-zip": "^1.1.1",
-    "nuxt": "latest",
+    "nuxt": "2.15.8",
     "slugify": "^1.4.5"
   },
   "devDependencies": {
     "electron": "latest",
-    "electron-packager": "latest"
+    "electron-packager": "latest",
+    "javascript-obfuscator": "^2.19.0",
+    "webpack-obfuscator": "2.6.0"
   }
 }
