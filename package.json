@@ -10,30 +10,29 @@
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development electron .",
-    "build": "nuxt build && cp ./package.json ./build && cp ./main.js ./build && npm run obfuscate-nuxt-config",
+    "build": "nuxt build && mkdir ./tmp && mv ./build/* ./tmp && mv ./tmp ./build/build && cp ./package.json ./build && cp -r ./node_modules ./build && npm run obfuscate-main && npm run obfuscate-nuxt-config",
     "obfuscate-main": "javascript-obfuscator main.js --output ./build rotateStringArray=true",
-    "obfuscate-preload": "javascript-obfuscator preload.js --output ./build rotateStringArray=true",
     "obfuscate-nuxt-config": "javascript-obfuscator nuxt.config.js --output ./build rotateStringArray=true",
     "start": "electron .",
-    "mac": "electron-packager ./build --overwrite --asar --platform darwin --arch x64 --icon ./static/icon.ico --out dist --no-prune",
-    "win": "electron-packager ./build --overwrite --asar --platform win32 --arch ia32 --icon ./static/icon.ico --out dist --no-prune",
-    "linux": "electron-packager ./build --overwrite --asar --platform linux --arch x64 --icon ./static/icon.icns --out dist --no-prune"
+    "mac": "electron-packager ./build --overwrite --asar --platform darwin --arch x64 --icon ./static/icon.ico --out dist --prune",
+    "win": "electron-packager ./build --overwrite --asar --platform win32 --arch ia32 --icon ./static/icon.ico --out dist --prune",
+    "linux": "electron-packager ./build --overwrite --asar --platform linux --arch x64 --icon ./static/icon.icns --out dist --prune"
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
     "@nuxtjs/axios": "^5.13.4",
     "@nuxtjs/fontawesome": "^1.1.2",
     "bootstrap-vue": "^2.17.3",
-    "cross-env": "^3.1.4",
-    "electron": "latest",
     "electron-dl": "^3.0.2",
     "js2excel": "^1.0.1",
     "json2xls": "^0.1.2",
     "node-zip": "^1.1.1",
-    "nuxt": "2.15.8",
+    "nuxt": "latest",
     "slugify": "^1.4.5"
   },
   "devDependencies": {
+    "cross-env": "^3.1.4",
+    "electron": "latest",
     "electron-packager": "latest",
     "javascript-obfuscator": "^2.19.0",
     "webpack-obfuscator": "2.6.0"

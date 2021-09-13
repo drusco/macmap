@@ -1,5 +1,3 @@
-const WebpackObfuscator = require('webpack-obfuscator');
-
 module.exports = {
 
     telemetry: false,
@@ -55,6 +53,7 @@ module.exports = {
                 config.target = 'electron-renderer'
             }
             if (!isDev) {
+                const WebpackObfuscator = require('webpack-obfuscator');
                 config.plugins.push(
                   new WebpackObfuscator ({
                       rotateStringArray: true
