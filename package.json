@@ -10,7 +10,7 @@
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development electron .",
-    "build": "nuxt build && cp ./package.json ./build && npm run obfuscate-main && npm run obfuscate-preload && npm run obfuscate-nuxt-config",
+    "build": "nuxt build && cp ./package.json ./build && cp ./main.js ./build && npm run obfuscate-nuxt-config",
     "obfuscate-main": "javascript-obfuscator main.js --output ./build rotateStringArray=true",
     "obfuscate-preload": "javascript-obfuscator preload.js --output ./build rotateStringArray=true",
     "obfuscate-nuxt-config": "javascript-obfuscator nuxt.config.js --output ./build rotateStringArray=true",
@@ -25,6 +25,7 @@
     "@nuxtjs/fontawesome": "^1.1.2",
     "bootstrap-vue": "^2.17.3",
     "cross-env": "^3.1.4",
+    "electron": "latest",
     "electron-dl": "^3.0.2",
     "js2excel": "^1.0.1",
     "json2xls": "^0.1.2",
@@ -33,7 +34,6 @@
     "slugify": "^1.4.5"
   },
   "devDependencies": {
-    "electron": "latest",
     "electron-packager": "latest",
     "javascript-obfuscator": "^2.19.0",
     "webpack-obfuscator": "2.6.0"
