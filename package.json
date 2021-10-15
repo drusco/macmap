@@ -14,9 +14,9 @@
     "obfuscate-main": "javascript-obfuscator main.js --output ./build rotateStringArray=true",
     "obfuscate-nuxt-config": "javascript-obfuscator nuxt.config.js --output ./build rotateStringArray=true",
     "start": "electron .",
-    "mac": "electron-packager ./build --overwrite --asar --platform darwin --arch x64 --icon ./static/icon.icns --out dist --prune",
-    "win": "electron-packager ./build --overwrite --asar --platform win32 --arch ia32 --icon ./static/icon.ico --out dist --prune",
-    "linux": "electron-packager ./build --overwrite --asar --platform linux --arch x64 --icon ./static/icon.ico --out dist --prune"
+    "mac": "electron-packager ./build --overwrite --asar --platform darwin --arch x64 --icon ./static/icon.icns --out dist --no-prune",
+    "win": "electron-packager ./build --overwrite --asar --platform win32 --arch ia32 --icon ./static/icon.ico --out dist --no-prune",
+    "linux": "electron-packager ./build --overwrite --asar --platform linux --arch x64 --icon ./static/icon.ico --out dist --no-prune"
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
